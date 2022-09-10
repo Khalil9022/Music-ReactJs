@@ -1,32 +1,31 @@
 import React, { Component } from "react";
+import User from "./User";
+import Search from "./Search";
+
+const API_ADDRESS = 'https://jsonplaceholder.typicode.com'
 
 class App extends Component {
-  state = { artistQuery: '' }
+  state = { artist: null }
 
-  updateArtistQuery = event => {
-    console.log('event.target.value', event.target.value);
-    this.setState({ artistQuery: event.target.value })
-  }
-
-  handleKeyPress = event => {
-    if (event.key === 'Enter') {
-      this.searchArtis()
-    }
-  }
-
-  searchArtis = () => {
-    console.log('this.state', this.state);
+  searchArtis = artistQuery => {
+    fetch(`${API_ADDRESS}/users/${artistQuery}`)
+      .then(response => response.json())
+      .then(json => {
+        console.log('json', json);
+        const artist = json
+        this.setState({ artist })
+      })
+      .catch(error => alert(error.message))
   }
 
   render() {
+    console.log('this.state', this.state);
+
     return (
       <div>
         <h2>Music Master</h2>
-        <input
-          onChange={this.updateArtistQuery}
-          onKeyPress={this.handleKeyPress}
-          placeholder="Search for an Artist" />
-        <button onClick={this.searchArtis}>Search</button>
+        <Search searchArtis={this.searchArtis} />
+        <User artist={this.state.artist} />
       </div>
     );
   }
